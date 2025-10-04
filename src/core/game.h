@@ -1,8 +1,8 @@
 #pragma once
 
-#include "logger.h"
+#include "logging/logger.h"
 #include "window.h"
-#include "renderer.h"
+#include "rendering/renderer.h"
 
 class Game
 {

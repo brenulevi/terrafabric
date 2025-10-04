@@ -1,7 +1,7 @@
 #include "game.h"
 
-#include "vertexbuffer.h"
-#include "vertexarray.h"
+#include "game/player.h"
+#include "game/chunk.h"
 
 Game* Game::s_instance = nullptr;
 
@@ -44,6 +44,11 @@ Game::Game()
         "assets/shaders/basic.frag");
         Logger::info("Shader 'basic' loaded");
 
+        ResourceManager::addShader("chunk",
+        "assets/shaders/chunk.vert",
+        "assets/shaders/chunk.frag");
+        Logger::info("Shader 'chunk' loaded");
+
         Logger::info("Resources loaded");
     }
     catch(const std::exception& e)
@@ -70,21 +75,11 @@ void Game::run()
     if(_isRunning)
         Logger::info("Starting game loop");
 
-    auto shader = ResourceManager::getShader("basic");
-    VertexBuffer vb;
-    VertexBufferLayout layout;
-    layout.push<float>(3); // position
-    layout.push<float>(2); // texCoord
-    layout.push<float>(3); // normal
-    VertexArray va;
-    va.addBuffer(vb, layout);
+    Player player;
+    Chunk chunk(glm::ivec2(1, -4));
+    chunk.generateMesh();
 
-    float vertices[] = {
-        // positions        // texCoords  // normals
-         0.0f,  0.5f, 0.0f,  0.5f, 1.0f,   0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,   0.0f, 0.0f, 1.0f,
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f,   0.0f, 0.0f, 1.0f
-    };
+    player.setRotation(glm::vec3(0.0f, -90.0f, 0.0f));
 
     while(_isRunning)
     {
@@ -92,9 +87,9 @@ void Game::run()
 
         _renderer->clear();
 
-        shader->bind();
-        va.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        _renderer->setView(player.getTransform(), player.getCamera());
+
+        _renderer->drawChunk(chunk.getGlobalPosition(), chunk.getMesh());
 
         _window->swapBuffers();
     }

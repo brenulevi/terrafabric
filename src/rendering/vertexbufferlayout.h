@@ -29,32 +29,8 @@ public:
     VertexBufferLayout() : _stride(0) {}
 
     template<typename T>
-    void push(int count)
-    {
-        static_assert(false, "Unsupported type in VertexBufferLayout::push");
-    }
-
-    template<>
-    void push<float>(int count)
-    {
-        _elements.push_back({GL_FLOAT, count, GL_FALSE});
-        _stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT);
-    }
-
-    template<>
-    void push<unsigned int>(int count)
-    {
-        _elements.push_back({GL_UNSIGNED_INT, count, GL_FALSE});
-        _stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_INT);
-    }
-
-    template<>
-    void push<unsigned char>(int count)
-    {
-        _elements.push_back({GL_UNSIGNED_BYTE, count, GL_TRUE});
-        _stride += count * VertexBufferElement::getSizeOfType(GL_UNSIGNED_BYTE);
-    }
-
+    void push(int count);
+    
     inline const std::vector<VertexBufferElement>& getElements() const { return _elements; }
     inline unsigned int getStride() const { return _stride; }
 
@@ -62,3 +38,16 @@ private:
     std::vector<VertexBufferElement> _elements;
     unsigned int _stride;
 };
+
+template <typename T>
+inline void VertexBufferLayout::push(int count)
+{
+    static_assert(false, "Unsupported type in VertexBufferLayout::push");
+}
+
+template <>
+inline void VertexBufferLayout::push<float>(int count)
+{
+    _elements.push_back({ GL_FLOAT, count, GL_FALSE });
+    _stride += count * VertexBufferElement::getSizeOfType(GL_FLOAT);
+}

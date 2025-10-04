@@ -9,14 +9,21 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(terrafabric
     src/main.cpp
-    src/game.cpp
-    src/window.cpp
-    src/logger.cpp
-    src/renderer.cpp
-    src/resourcemanager.cpp
-    src/shader.cpp
-    src/buffer.cpp
-    src/vertexarray.cpp
+
+    src/core/game.cpp
+    src/core/window.cpp
+    src/core/resourcemanager.cpp
+    src/core/input.cpp
+
+    src/logging/logger.cpp
+
+    src/rendering/renderer.cpp
+    src/rendering/shader.cpp
+    src/rendering/buffer.cpp
+    src/rendering/vertexarray.cpp
+
+    src/game/chunk.cpp
+    src/game/player.cpp
 
     dependencies/glad/src/glad.c
 )
@@ -31,6 +38,8 @@ target_include_directories(terrafabric PRIVATE
     dependencies/glad/include
     dependencies/glm/
     dependencies/stb/
+
+    src/
 )
 
 if(WIN32)
@@ -39,8 +48,8 @@ else()
     target_link_libraries(terrafabric PRIVATE GL)
 endif()
 
-# add_custom_command(
-#     TARGET terrafabric POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_directory
-#         ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:terrafabric>/assets
-#     COMMENT "Copying assets to output directory")
+add_custom_command(
+    TARGET terrafabric POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:terrafabric>/assets
+    COMMENT "Copying assets to output directory")

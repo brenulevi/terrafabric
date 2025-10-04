@@ -10,9 +10,11 @@ public:
 
     void bind();
 
-    void setData(GLsizeiptr size, const void* data, GLenum usage);
+    void setData(GLsizeiptr size, const void *data, GLenum usage);
 
 private:
-    unsigned int _id;
     GLenum _type;
+
+protected:
+    unsigned int _id;
 };

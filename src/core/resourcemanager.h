@@ -3,8 +3,7 @@
 #include <unordered_map>
 #include <string>
 
-#include "shader.h"
-#include "vertexbufferlayout.h"
+#include "rendering/shader.h"
 
 class ResourceManager
 {

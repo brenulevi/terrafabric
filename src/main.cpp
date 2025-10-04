@@ -1,5 +1,5 @@
-#include "logger.h"
-#include "game.h"
+#include "logging/logger.h"
+#include "core/game.h"
 
 int main()
 {
