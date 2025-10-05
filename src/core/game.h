@@ -3,6 +3,8 @@
 #include "logging/logger.h"
 #include "window.h"
 #include "rendering/renderer.h"
+#include "game/player.h"
+#include "input.h"
 
 class Game
 {
@@ -22,6 +24,8 @@ private:
 
     Window* _window;
     Renderer* _renderer;
+
+    Player* _player;
 
     static Game* s_instance;
 };

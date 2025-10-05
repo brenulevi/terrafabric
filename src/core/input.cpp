@@ -4,6 +4,9 @@ bool Input::_currentKeys[GLFW_KEY_LAST];
 bool Input::_previousKeys[GLFW_KEY_LAST];
 bool Input::_currentMouseButton[GLFW_MOUSE_BUTTON_LAST];
 bool Input::_previousMouseButton[GLFW_MOUSE_BUTTON_LAST];
+float Input::_mouseX = 0.0f;
+float Input::_mouseY = 0.0f;
+CursorMode Input::_cursorMode = CursorMode::NORMAL;
 
 void Input::initialize()
 {
@@ -12,7 +15,7 @@ void Input::initialize()
         _currentKeys[i] = false;
         _previousKeys[i] = false;
         
-        if(i <= GLFW_MOUSE_BUTTON_LAST)
+        if(i < GLFW_MOUSE_BUTTON_LAST)
         {
             _currentMouseButton[i] = false;
             _previousMouseButton[i] = false;
@@ -33,4 +36,15 @@ void Input::update()
             _previousMouseButton[i] = _currentMouseButton[i];
         }
     }
+
+    double xpos, ypos;
+    glfwGetCursorPos(glfwGetCurrentContext(), &xpos, &ypos);
+    _mouseX = static_cast<float>(xpos);
+    _mouseY = static_cast<float>(ypos);
+}
+
+void Input::setCursorMode(CursorMode mode)
+{
+    _cursorMode = mode;
+    glfwSetInputMode(glfwGetCurrentContext(), GLFW_CURSOR, mode);
 }

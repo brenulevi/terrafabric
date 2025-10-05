@@ -8,7 +8,6 @@ Renderer::Renderer()
     _matricesUBO = new UniformBuffer(2 * sizeof(glm::mat4), 0); // Binding point 0
 
     glEnable(GL_DEPTH_TEST);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 Renderer::~Renderer()
@@ -39,6 +38,9 @@ void Renderer::drawChunk(const glm::vec3 &globalPosition, Mesh *mesh)
 
     mesh->vertexArray.bind();
     mesh->indexBuffer.bind();
+
+    ResourceManager::getTexture("atlas")->bind(0);
+    shader->setUniform1i("uAtlasTexture", 0);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, globalPosition);

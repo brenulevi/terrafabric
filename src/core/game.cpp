@@ -37,17 +37,27 @@ Game::Game()
         _renderer->setViewport(0, 0, 800, 600);
         Logger::info("Renderer created");
 
+        Input::initialize();
+
         Logger::info("Loading resources");
 
         ResourceManager::addShader("basic",
-        "assets/shaders/basic.vert",
-        "assets/shaders/basic.frag");
+        "./assets/shaders/basic.vert",
+        "./assets/shaders/basic.frag");
         Logger::info("Shader 'basic' loaded");
 
         ResourceManager::addShader("chunk",
-        "assets/shaders/chunk.vert",
-        "assets/shaders/chunk.frag");
+        "./assets/shaders/chunk.vert",
+        "./assets/shaders/chunk.frag");
         Logger::info("Shader 'chunk' loaded");
+
+        Logger::info("Loading texture atlas");
+        ResourceManager::addTexture("atlas", "./assets/textures/atlas.png");
+        Logger::info("Texture 'atlas' loaded");
+
+        Logger::info("Loading crosshair texture");
+        ResourceManager::addTexture("crosshair", "./assets/textures/crosshair.png");
+        Logger::info("Texture 'crosshair' loaded");
 
         Logger::info("Resources loaded");
     }
@@ -56,12 +66,16 @@ Game::Game()
         Logger::error(e.what());
         return;
     }
+
+    _player = new Player();
     
     _isRunning = true;
 }
 
 Game::~Game()
 {
+    delete _player;
+
     delete _renderer;
     delete _window;
 
@@ -75,19 +89,32 @@ void Game::run()
     if(_isRunning)
         Logger::info("Starting game loop");
 
-    Player player;
     Chunk chunk(glm::ivec2(1, -4));
     chunk.generateMesh();
 
-    player.setRotation(glm::vec3(0.0f, -90.0f, 0.0f));
+    Input::setCursorMode(CursorMode::DISABLED);
+
+    float totalTime = 0.0f;
 
     while(_isRunning)
     {
+        float deltaTime = glfwGetTime() - totalTime;
+        totalTime += deltaTime;
+
         _window->pollEvents();
+        Input::update();
+
+        _player->update(deltaTime);
+
+        if(Input::isKeyPressed(GLFW_KEY_ESCAPE))
+            onClose();
+
+        if(Input::isKeyPressed(GLFW_KEY_F11))
+            _window->setFullscreen(!_window->isFullscreen());
 
         _renderer->clear();
 
-        _renderer->setView(player.getTransform(), player.getCamera());
+        _renderer->setView(_player->getTransform(), _player->getCamera());
 
         _renderer->drawChunk(chunk.getGlobalPosition(), chunk.getMesh());
 
@@ -105,4 +132,5 @@ void Game::onResize(int width, int height)
 {
     Logger::info("Window resized to {}x{}", width, height);
     _renderer->onResize(width, height);
+    _player->onResize(width, height);
 }

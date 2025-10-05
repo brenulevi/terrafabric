@@ -21,6 +21,7 @@ add_executable(terrafabric
     src/rendering/shader.cpp
     src/rendering/buffer.cpp
     src/rendering/vertexarray.cpp
+    src/rendering/texture.cpp
 
     src/game/chunk.cpp
     src/game/player.cpp
@@ -30,6 +31,7 @@ add_executable(terrafabric
 
 target_compile_definitions(terrafabric PRIVATE
     GLFW_INCLUDE_NONE
+    STB_IMAGE_IMPLEMENTATION
 )
 
 target_link_libraries(terrafabric PRIVATE glfw spdlog)
@@ -44,6 +46,7 @@ target_include_directories(terrafabric PRIVATE
 
 if(WIN32)
     target_link_libraries(terrafabric PRIVATE opengl32)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 else()
     target_link_libraries(terrafabric PRIVATE GL)
 endif()

@@ -4,7 +4,7 @@
 
 struct Block
 {
-    enum class Type
+    enum Type
     {
         Air,
         Grass,

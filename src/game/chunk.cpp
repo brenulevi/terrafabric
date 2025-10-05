@@ -12,18 +12,14 @@ Chunk::Chunk(glm::ivec2 position)
         {
             for(int z = 0; z < CHUNK_SIZE_Z; ++z)
             {
-                if(y < 64)
-                    _blocks[x][y][z] = Block(Block::Type::Dirt);
-                else if(y == 64)
-                    _blocks[x][y][z] = Block(Block::Type::Grass);
-                else
-                    _blocks[x][y][z] = Block(Block::Type::Air);
+                _blocks[x][y][z] = Block(Block::Type::Grass);
             }
         }
     }
 
     VertexBufferLayout layout;
     layout.push<float>(3); // Position
+    layout.push<float>(2); // UVs
     _mesh = new Mesh(layout);
 }
 
@@ -57,7 +53,7 @@ void Chunk::generateMesh()
 
                 for(int i = 0; i < 6; i++)
                     if(facesVisible[i])
-                        updateMeshData(vertices, indices, x, y, z, i);
+                        updateMeshData(vertices, indices, x, y, z, i, block.getType());
             }
         }
     }
@@ -91,56 +87,98 @@ bool Chunk::verifyGlobalVisibility(int x, int y, int z)
     return true;
 }
 
-void Chunk::updateMeshData(std::vector<float> &vertices, std::vector<unsigned int> &indices, int x, int y, int z, int face)
+void Chunk::updateMeshData(std::vector<float> &vertices, std::vector<unsigned int> &indices, int x, int y, int z, int face, Block::Type type)
 {
+    glm::vec2 leftUV = getUV(face, type);
+    glm::vec2 rightUV;
+    rightUV.x = leftUV.x + (TEXTURE_SIZE / static_cast<float>(TEXTURE_ATLAS_SIZE));
+    rightUV.y = leftUV.y + (TEXTURE_SIZE / static_cast<float>(TEXTURE_ATLAS_SIZE));
+
     if(face == 0)   // top
     {
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);    // Bottom-left
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);    // Bottom-right
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);   // Top-right
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);   // Top-left
     }
     else if(face == 1) // bottom
     {
-        vertices.push_back(x);     vertices.push_back(y); vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y); vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y); vertices.push_back(z + 1);
-        vertices.push_back(x);     vertices.push_back(y); vertices.push_back(z + 1);
+        vertices.push_back(x);     vertices.push_back(y); vertices.push_back(z);            vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);    // Bottom-left
+        vertices.push_back(x + 1); vertices.push_back(y); vertices.push_back(z);            vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);    // Bottom-right
+        vertices.push_back(x + 1); vertices.push_back(y); vertices.push_back(z + 1);        vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);   // Top-right
+        vertices.push_back(x);     vertices.push_back(y); vertices.push_back(z + 1);        vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);   // Top-left
     }
     else if(face == 2) // left
     {
-        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z);
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);
-        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z + 1);
+        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);    // Bottom-left
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);   // Top-left
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);   // Top-right
+        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);    // Bottom-right
     }
     else if(face == 3) // right
     {
-        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);
-        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z + 1);
+        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);    // Bottom-left
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);   // Top-left
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);   // Top-right
+        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);    // Bottom-right
     }
     else if(face == 4) // front
     {
-        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);
+        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);    // Bottom-left
+        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z);        vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);    // Bottom-right
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);   // Top-right
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z);        vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);   // Top-left
     }
     else if(face == 5) // back
     {
-        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z + 1);
-        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z + 1);
-        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);
-        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);
+        vertices.push_back(x);     vertices.push_back(y);     vertices.push_back(z + 1);    vertices.push_back(leftUV.x);  vertices.push_back(leftUV.y);   // Bottom-left
+        vertices.push_back(x + 1); vertices.push_back(y);     vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(leftUV.y);   // Bottom-right
+        vertices.push_back(x + 1); vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(rightUV.x); vertices.push_back(rightUV.y);  // Top-right
+        vertices.push_back(x);     vertices.push_back(y + 1); vertices.push_back(z + 1);    vertices.push_back(leftUV.x);  vertices.push_back(rightUV.y);  // Top-left
     }
 
-    unsigned int startIndex = vertices.size() / 3 - 4; // Each vertex has 3 components (x, y, z)
-    indices.push_back(startIndex);
-    indices.push_back(startIndex + 1);
-    indices.push_back(startIndex + 2);
-    indices.push_back(startIndex + 2);
-    indices.push_back(startIndex + 3);
-    indices.push_back(startIndex);
+    unsigned int startIndex = vertices.size() / 5 - 4; // Each vertex has 3 components (x, y, z)
+    indices.push_back(startIndex);      indices.push_back(startIndex + 1);  indices.push_back(startIndex + 2);
+    indices.push_back(startIndex + 2);  indices.push_back(startIndex + 3);  indices.push_back(startIndex);
+}
+
+glm::vec2 Chunk::getUV(int face, Block::Type type)
+{
+    int tileX = 0;
+    int tileY = 0;
+
+    switch(type)
+    {
+        case Block::Type::Grass:
+            if(face == 0) // Top
+            {
+                tileX = 0; tileY = 0;
+            }
+            else if(face == 1) // Bottom
+            {
+                tileX = 2; tileY = 0;
+            }
+            else // Sides
+            {
+                tileX = 1; tileY = 0;
+            }
+            break;
+        case Block::Type::Dirt:
+            tileX = 2; tileY = 0;
+            break;
+        case Block::Type::Stone:
+            tileX = 3; tileY = 0;
+            break;
+        case Block::Type::Bedrock:
+            tileX = 4; tileY = 0;
+            break;
+        default: // Air or unknown type
+            tileX = 5; tileY = 0; // Assuming a placeholder texture for air/unknown
+            break;
+    }
+
+    float u = (tileX * TEXTURE_SIZE) / static_cast<float>(TEXTURE_ATLAS_SIZE);
+    float v = (tileY * TEXTURE_SIZE) / static_cast<float>(TEXTURE_ATLAS_SIZE);
+
+    return glm::vec2(u, v);
 }

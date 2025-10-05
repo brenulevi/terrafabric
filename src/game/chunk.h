@@ -10,6 +10,9 @@
 #define CHUNK_SIZE_Y 256
 #define CHUNK_SIZE_Z 16
 
+#define TEXTURE_ATLAS_SIZE 256
+#define TEXTURE_SIZE 32
+
 class Chunk
 {
 public:
@@ -27,7 +30,8 @@ private:
     bool verifyFaceVisibility(int x, int y, int z);
     bool verifyLocalVisibility(int x, int y, int z);
     bool verifyGlobalVisibility(int x, int y, int z);
-    void updateMeshData(std::vector<float>& vertices, std::vector<unsigned int>& indices, int x, int y, int z, int face);
+    void updateMeshData(std::vector<float>& vertices, std::vector<unsigned int>& indices, int x, int y, int z, int face, Block::Type type);
+    glm::vec2 getUV(int face, Block::Type type);
 
 private:
     glm::ivec2 _chunkPosition;

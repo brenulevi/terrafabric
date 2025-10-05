@@ -12,7 +12,11 @@ Window::Window(int width, int height, const char* title)
         throw std::runtime_error("Failed to create GLFW window");
 
     glfwMakeContextCurrent(_ptr);
+    glfwSwapInterval(0);
     glfwSetWindowUserPointer(_ptr, this);
+
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    glfwSetWindowPos(_ptr, (mode->width - _width) / 2, (mode->height - _height) / 2);
 
     glfwSetWindowCloseCallback(_ptr, [](GLFWwindow* window) {
         Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -42,4 +46,24 @@ void Window::pollEvents()
 void Window::swapBuffers()
 {
     glfwSwapBuffers(_ptr);
+}
+
+void Window::setFullscreen(bool fullscreen)
+{
+    _isFullscreen = fullscreen;
+
+
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    if (fullscreen)
+    {
+        _lastWidth = _width;
+        _lastHeight = _height;
+        glfwSetWindowMonitor(_ptr, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+    }
+    else
+    {
+        glfwSetWindowMonitor(_ptr, nullptr, (mode->width - _lastWidth) / 2, (mode->height - _lastHeight) / 2, _lastWidth, _lastHeight, 0);
+    }
 }
