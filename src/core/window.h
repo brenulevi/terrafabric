@@ -19,6 +19,9 @@ public:
     inline void setOnCloseCallback(const std::function<void()>& callback) { _onClose = callback; }
     inline void setOnResizeCallback(const std::function<void(int, int)>& callback) { _onResize = callback; }
 
+    inline int getWidth() const { return _width; }
+    inline int getHeight() const { return _height; }
+
 private:
     GLFWwindow* _ptr;
     int _width;

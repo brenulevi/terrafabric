@@ -51,13 +51,33 @@ Game::Game()
         "./assets/shaders/chunk.frag");
         Logger::info("Shader 'chunk' loaded");
 
-        Logger::info("Loading texture atlas");
-        ResourceManager::addTexture("atlas", "./assets/textures/atlas.png");
-        Logger::info("Texture 'atlas' loaded");
+        ResourceManager::addShader("sprite",
+        "./assets/shaders/sprite.vert",
+        "./assets/shaders/sprite.frag");
 
-        Logger::info("Loading crosshair texture");
+        ResourceManager::addTexture("atlas", "./assets/textures/atlas.png");
+
         ResourceManager::addTexture("crosshair", "./assets/textures/crosshair.png");
-        Logger::info("Texture 'crosshair' loaded");
+
+        Logger::info("Loading quad mesh");
+        float quadVertices[] = {
+            // positions    // texCoords
+            -0.5f, -0.5f,  0.0f, 0.0f,
+             0.5f, -0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  1.0f, 1.0f,
+            -0.5f,  0.5f,  0.0f, 1.0f
+        };
+        unsigned int quadIndices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+        VertexBufferLayout quadLayout;
+        quadLayout.push<float>(2); // Position
+        quadLayout.push<float>(2); // TexCoords
+        auto quadMesh = ResourceManager::addMesh("quad", quadLayout);
+        quadMesh->vertexBuffer.setData(sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+        quadMesh->indexBuffer.setData(sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
+        Logger::info("Mesh 'quad' loaded");
 
         Logger::info("Resources loaded");
     }
@@ -112,11 +132,24 @@ void Game::run()
         if(Input::isKeyPressed(GLFW_KEY_F11))
             _window->setFullscreen(!_window->isFullscreen());
 
+        if(Input::isKeyPressed(GLFW_KEY_C))
+            _renderer->setPolygonMode(GL_LINE);
+        if(Input::isKeyPressed(GLFW_KEY_V))
+            _renderer->setPolygonMode(GL_FILL);
+
         _renderer->clear();
 
         _renderer->setView(_player->getTransform(), _player->getCamera());
 
         _renderer->drawChunk(chunk.getGlobalPosition(), chunk.getMesh());
+
+        auto crosshairTexture = ResourceManager::getTexture("crosshair");
+        float x = (_window->getWidth() - crosshairTexture->getWidth()) / 2.0f;
+        float y = (_window->getHeight() - crosshairTexture->getHeight()) / 2.0f;
+        float sizeX = crosshairTexture->getWidth();
+        float sizeY = crosshairTexture->getHeight();
+
+        _renderer->drawSprite(glm::vec2(x, y), glm::vec2(sizeX, sizeY) * 2.0f, 0.0f, crosshairTexture);
 
         _window->swapBuffers();
     }

@@ -15,6 +15,9 @@ public:
     void setFiltering(GLenum minFilter, GLenum magFilter);
     void setWrapMode(GLenum wrapS, GLenum wrapT);
 
+    inline int getWidth() const { return _width; }
+    inline int getHeight() const { return _height; }
+
 private:
     unsigned int _id;
     int _width;

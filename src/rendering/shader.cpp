@@ -1,4 +1,5 @@
 #include "shader.h"
+#include <iostream>
 
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
@@ -21,6 +22,9 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
         glGetProgramInfoLog(_id, 512, nullptr, infoLog);
         throw std::runtime_error("Shader program linking failed: " + std::string(infoLog));
     }
+
+    // test
+    std::cout << "Shader 'Matrices' uniform block index: " << glGetUniformBlockIndex(_id, "Ortho") << std::endl;
 }
 
 Shader::~Shader()

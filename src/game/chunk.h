@@ -7,7 +7,7 @@
 #include "rendering/mesh.h"
 
 #define CHUNK_SIZE_X 16
-#define CHUNK_SIZE_Y 256
+#define CHUNK_SIZE_Y 16
 #define CHUNK_SIZE_Z 16
 
 #define TEXTURE_ATLAS_SIZE 256

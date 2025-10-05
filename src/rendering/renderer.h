@@ -24,11 +24,14 @@ public:
     void setView(Transform& transform, Camera& camera);
 
     void drawChunk(const glm::vec3& globalPosition, Mesh* mesh);
+    void drawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, Texture* texture);
 
     void setViewport(int x, int y, int width, int height);
+    void setPolygonMode(GLenum mode) { glPolygonMode(GL_FRONT_AND_BACK, mode); }
 
     void onResize(int width, int height);
 
 private:
     UniformBuffer* _matricesUBO;
+    UniformBuffer* _orthoUBO;
 };

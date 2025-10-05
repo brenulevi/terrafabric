@@ -2,6 +2,7 @@
 
 std::unordered_map<std::string, Shader*> ResourceManager::_shaders;
 std::unordered_map<std::string, Texture*> ResourceManager::_textures;
+std::unordered_map<std::string, Mesh*> ResourceManager::_meshes;
 
 void ResourceManager::shutdown()
 {
@@ -42,6 +43,21 @@ Texture *ResourceManager::getTexture(const std::string &name)
     if (_textures.find(name) != _textures.end())
     {
         return _textures[name];
+    }
+    return nullptr;
+}
+
+Mesh *ResourceManager::addMesh(const std::string &name, VertexBufferLayout &layout)
+{
+    _meshes[name] = new Mesh(layout);
+    return _meshes[name];
+}
+
+Mesh *ResourceManager::getMesh(const std::string &name)
+{
+    if (_meshes.find(name) != _meshes.end())
+    {
+        return _meshes[name];
     }
     return nullptr;
 }

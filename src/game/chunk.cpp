@@ -5,7 +5,6 @@ Chunk::Chunk(glm::ivec2 position)
 {
     _worldPosition = glm::vec3(position.x * CHUNK_SIZE_X, 0.0f, position.y * CHUNK_SIZE_Z);
 
-    // Initialize all blocks to Air
     for(int x = 0; x < CHUNK_SIZE_X; ++x)
     {
         for(int y = 0; y < CHUNK_SIZE_Y; ++y)
