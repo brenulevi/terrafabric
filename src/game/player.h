@@ -5,6 +5,8 @@
 #include "rendering/transform.h"
 #include "rendering/camera.h"
 #include "core/input.h"
+#include "core/raycast.h"
+#include "logging/logger.h"
 
 class Player
 {
@@ -23,6 +25,11 @@ public:
     inline Transform& getTransform() { return _transform; }
     inline Camera& getCamera() { return _camera; }
     inline float getSpeed() { return _moveSpeed; }
+
+private:
+    void updateMovement(float deltaTime);
+    void updateMouseLook();
+    void doRayCast();
 
 private:
     Transform _transform;

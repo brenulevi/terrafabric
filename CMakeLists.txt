@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.18)
 
 add_subdirectory(dependencies/glfw)
 add_subdirectory(dependencies/spdlog)
@@ -14,6 +14,7 @@ add_executable(terrafabric
     src/core/window.cpp
     src/core/resourcemanager.cpp
     src/core/input.cpp
+    src/core/raycast.cpp
 
     src/logging/logger.cpp
 
@@ -25,6 +26,7 @@ add_executable(terrafabric
 
     src/game/chunk.cpp
     src/game/player.cpp
+    src/game/world.cpp
 
     dependencies/glad/src/glad.c
 )

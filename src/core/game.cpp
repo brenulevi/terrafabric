@@ -1,8 +1,5 @@
 #include "game.h"
 
-#include "game/player.h"
-#include "game/chunk.h"
-
 Game* Game::s_instance = nullptr;
 
 Game::Game()
@@ -87,13 +84,19 @@ Game::Game()
         return;
     }
 
+    _world = new World();
+    _world->generateWorld();
     _player = new Player();
-    
+    _player->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
+
     _isRunning = true;
 }
 
 Game::~Game()
 {
+    Logger::info("Shutting down game");
+
+    delete _world;
     delete _player;
 
     delete _renderer;
@@ -108,9 +111,6 @@ void Game::run()
 {
     if(_isRunning)
         Logger::info("Starting game loop");
-
-    Chunk chunk(glm::ivec2(1, -4));
-    chunk.generateMesh();
 
     Input::setCursorMode(CursorMode::DISABLED);
 
@@ -141,8 +141,14 @@ void Game::run()
 
         _renderer->setView(_player->getTransform(), _player->getCamera());
 
-        _renderer->drawChunk(chunk.getGlobalPosition(), chunk.getMesh());
+        // Render all chunks
+        for(auto& pair : _world->getAllChunks())
+        {
+            Chunk* chunk = pair.second;
+            _renderer->drawChunk(chunk->getGlobalPosition(), chunk->getMesh());
+        }
 
+        // Render crosshair
         auto crosshairTexture = ResourceManager::getTexture("crosshair");
         float x = (_window->getWidth() - crosshairTexture->getWidth()) / 2.0f;
         float y = (_window->getHeight() - crosshairTexture->getHeight()) / 2.0f;

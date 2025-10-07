@@ -9,8 +9,6 @@ Renderer::Renderer()
     _orthoUBO = new UniformBuffer(sizeof(glm::mat4), 1);    // Binding point 1
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     _orthoUBO->bind();
     glm::mat4 ortho = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
@@ -75,7 +73,12 @@ void Renderer::drawSprite(const glm::vec2 &position, const glm::vec2 &size, floa
     model = glm::scale(model, glm::vec3(size, 1.0f));
     shader->setUniformMat4("model", glm::value_ptr(model));
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glDrawElements(GL_TRIANGLES, quadMesh->indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
+
+    glDisable(GL_BLEND);
 }
 
 void Renderer::setViewport(int x, int y, int width, int height)

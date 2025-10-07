@@ -32,8 +32,8 @@ void Input::update()
         
         if(i <= GLFW_MOUSE_BUTTON_LAST)
         {
-            _currentMouseButton[i] = glfwGetMouseButton(glfwGetCurrentContext(), i);
             _previousMouseButton[i] = _currentMouseButton[i];
+            _currentMouseButton[i] = glfwGetMouseButton(glfwGetCurrentContext(), i);
         }
     }
 

@@ -1,5 +1,7 @@
 #include "chunk.h"
 
+#include "core/game.h"
+
 Chunk::Chunk(glm::ivec2 position)
     : _chunkPosition(position)
 {
@@ -61,11 +63,19 @@ void Chunk::generateMesh()
     _mesh->indexBuffer.setData(indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 }
 
-Block &Chunk::getBlock(int x, int y, int z)
+Block Chunk::getBlock(int x, int y, int z)
 {
     if(x < 0 || x >= CHUNK_SIZE_X || y < 0 || y >= CHUNK_SIZE_Y || z < 0 || z >= CHUNK_SIZE_Z)
-        throw std::out_of_range("Block coordinates out of range");
+        return Block();
     return _blocks[x][y][z];
+}
+
+void Chunk::setBlock(int x, int y, int z, Block block)
+{
+    if(x < 0 || x >= CHUNK_SIZE_X || y < 0 || y >= CHUNK_SIZE_Y || z < 0 || z >= CHUNK_SIZE_Z)
+        throw std::out_of_range("Block position out of range in chunk");
+
+    _blocks[x][y][z] = block;
 }
 
 bool Chunk::verifyFaceVisibility(int x, int y, int z)
@@ -83,7 +93,24 @@ bool Chunk::verifyLocalVisibility(int x, int y, int z)
 
 bool Chunk::verifyGlobalVisibility(int x, int y, int z)
 {
-    return true;
+   if(x > 0 && x < CHUNK_SIZE_X - 1 && z > 0 && z < CHUNK_SIZE_Z - 1)
+        return true;
+
+    Chunk* neighbor = Game::getInstance()->getWorld()->getChunkAt(
+        glm::ivec2(
+            _chunkPosition.x + (x < 0 ? -1 : (x >= CHUNK_SIZE_X ? 1 : 0)),
+            _chunkPosition.y + (z < 0 ? -1 : (z >= CHUNK_SIZE_Z ? 1 : 0))
+        )
+    );
+
+    if(!neighbor)
+        return true;
+
+    return neighbor->getBlock(
+        (x < 0 ? CHUNK_SIZE_X - 1 : (x >= CHUNK_SIZE_X ? 0 : x)),
+        y,
+        (z < 0 ? CHUNK_SIZE_Z - 1 : (z >= CHUNK_SIZE_Z ? 0 : z))
+    ).getType() == Block::Type::Air;
 }
 
 void Chunk::updateMeshData(std::vector<float> &vertices, std::vector<unsigned int> &indices, int x, int y, int z, int face, Block::Type type)

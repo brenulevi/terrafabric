@@ -18,6 +18,9 @@ public:
     inline static bool isKeyHeld(int key) { return _currentKeys[key]; }
     inline static bool isKeyPressed(int key) { return _currentKeys[key] && !_previousKeys[key]; }
     inline static bool isKeyReleased(int key) { return !_currentKeys[key] && _previousKeys[key]; }
+    inline static bool isMouseButtonHeld(int button) { return _currentMouseButton[button]; }
+    inline static bool isMouseButtonPressed(int button) { return _currentMouseButton[button] && !_previousMouseButton[button]; }
+    inline static bool isMouseButtonReleased(int button) { return !_currentMouseButton[button] && _previousMouseButton[button]; }
 
     inline static float getMouseX() { return _mouseX; }
     inline static float getMouseY() { return _mouseY; }

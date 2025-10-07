@@ -1,7 +1,7 @@
 #include "window.h"
 
 Window::Window(int width, int height, const char* title)
-    : _width(width), _height(height), _title(title)
+    : _width(width), _height(height), _title(title), _isFullscreen(false), _lastWidth(width), _lastHeight(height)
 {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);

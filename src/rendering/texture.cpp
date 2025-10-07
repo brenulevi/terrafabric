@@ -19,7 +19,7 @@ Texture::Texture(const char *path)
 
     stbi_image_free(data);
 
-    setFiltering(GL_NEAREST_MIPMAP_NEAREST, GL_NEAREST);
+    setFiltering(GL_NEAREST_MIPMAP_LINEAR, GL_NEAREST);
     setWrapMode(GL_REPEAT, GL_REPEAT);
 }
 
