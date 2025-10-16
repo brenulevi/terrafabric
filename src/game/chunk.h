@@ -4,7 +4,7 @@
 #include <stdexcept>
 
 #include "block.h"
-#include "rendering/mesh.h"
+#include "components/mesh.h"
 
 #define CHUNK_SIZE_X 16
 #define CHUNK_SIZE_Y 16

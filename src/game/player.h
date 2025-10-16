@@ -2,8 +2,8 @@
 
 #include <glm/glm.hpp>
 
-#include "rendering/transform.h"
-#include "rendering/camera.h"
+#include "components/transform.h"
+#include "components/camera.h"
 #include "core/input.h"
 #include "logging/logger.h"
 

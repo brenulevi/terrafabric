@@ -1,8 +1,8 @@
 #pragma once
 
-#include "vertexarray.h"
-#include "vertexbuffer.h"
-#include "indexbuffer.h"
+#include "rendering/vertexarray.h"
+#include "rendering/vertexbuffer.h"
+#include "rendering/indexbuffer.h"
 
 struct Mesh
 {

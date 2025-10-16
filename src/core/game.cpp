@@ -35,48 +35,6 @@ Game::Game()
         Logger::info("Renderer created");
 
         Input::initialize();
-
-        Logger::info("Loading resources");
-
-        ResourceManager::addShader("basic",
-        "./assets/shaders/basic.vert",
-        "./assets/shaders/basic.frag");
-        Logger::info("Shader 'basic' loaded");
-
-        ResourceManager::addShader("chunk",
-        "./assets/shaders/chunk.vert",
-        "./assets/shaders/chunk.frag");
-        Logger::info("Shader 'chunk' loaded");
-
-        ResourceManager::addShader("sprite",
-        "./assets/shaders/sprite.vert",
-        "./assets/shaders/sprite.frag");
-
-        ResourceManager::addTexture("atlas", "./assets/textures/atlas.png");
-
-        ResourceManager::addTexture("crosshair", "./assets/textures/crosshair.png");
-
-        Logger::info("Loading quad mesh");
-        float quadVertices[] = {
-            // positions    // texCoords
-            -0.5f, -0.5f,  0.0f, 0.0f,
-             0.5f, -0.5f,  1.0f, 0.0f,
-             0.5f,  0.5f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.0f, 1.0f
-        };
-        unsigned int quadIndices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
-        VertexBufferLayout quadLayout;
-        quadLayout.push<float>(2); // Position
-        quadLayout.push<float>(2); // TexCoords
-        auto quadMesh = ResourceManager::addMesh("quad", quadLayout);
-        quadMesh->vertexBuffer.setData(sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-        quadMesh->indexBuffer.setData(sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
-        Logger::info("Mesh 'quad' loaded");
-
-        Logger::info("Resources loaded");
     }
     catch(const std::exception& e)
     {

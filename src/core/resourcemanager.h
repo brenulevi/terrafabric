@@ -5,7 +5,7 @@
 
 #include "rendering/shader.h"
 #include "rendering/texture.h"
-#include "rendering/mesh.h"
+#include "components/mesh.h"
 
 class ResourceManager
 {

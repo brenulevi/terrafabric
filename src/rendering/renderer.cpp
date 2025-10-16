@@ -2,18 +2,57 @@
 
 Renderer::Renderer()
 {
-    if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
         throw std::runtime_error("Failed to initialize GLAD");
 
     _matricesUBO = new UniformBuffer(2 * sizeof(glm::mat4), 0); // Binding point 0
-    _orthoUBO = new UniformBuffer(sizeof(glm::mat4), 1);    // Binding point 1
+    _orthoUBO = new UniformBuffer(sizeof(glm::mat4), 1);        // Binding point 1
 
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
 
     _orthoUBO->bind();
     glm::mat4 ortho = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
     _orthoUBO->setSubData(0, sizeof(glm::mat4), glm::value_ptr(ortho));
+
+    Logger::info("Loading resources");
+
+    ResourceManager::addShader("basic",
+                               "./assets/shaders/basic.vert",
+                               "./assets/shaders/basic.frag");
+    Logger::info("Shader 'basic' loaded");
+
+    ResourceManager::addShader("chunk",
+                               "./assets/shaders/chunk.vert",
+                               "./assets/shaders/chunk.frag");
+    Logger::info("Shader 'chunk' loaded");
+
+    ResourceManager::addShader("sprite",
+                               "./assets/shaders/sprite.vert",
+                               "./assets/shaders/sprite.frag");
+
+    ResourceManager::addTexture("atlas", "./assets/textures/atlas.png");
+
+    ResourceManager::addTexture("crosshair", "./assets/textures/crosshair.png");
+
+    Logger::info("Loading quad mesh");
+    float quadVertices[] = {
+        // positions    // texCoords
+        -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 1.0f, 1.0f,
+        -0.5f, 0.5f, 0.0f, 1.0f};
+    unsigned int quadIndices[] = {
+        0, 1, 2,
+        2, 3, 0};
+    VertexBufferLayout quadLayout;
+    quadLayout.push<float>(2); // Position
+    quadLayout.push<float>(2); // TexCoords
+    auto quadMesh = ResourceManager::addMesh("quad", quadLayout);
+    quadMesh->vertexBuffer.setData(sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    quadMesh->indexBuffer.setData(sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
+    Logger::info("Mesh 'quad' loaded");
+
+    Logger::info("Resources loaded");
 }
 
 Renderer::~Renderer()
@@ -27,7 +66,7 @@ void Renderer::clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Renderer::setView(Transform& transform, Camera &camera)
+void Renderer::setView(Transform &transform, Camera &camera)
 {
     glm::mat4 projection = glm::perspective(glm::radians(camera.fov), camera.aspectRatio, camera.nearClip, camera.farClip);
     glm::mat4 view = glm::lookAt(transform.position, transform.position + transform.forward, transform.up);
@@ -39,7 +78,7 @@ void Renderer::setView(Transform& transform, Camera &camera)
 
 void Renderer::drawChunk(const glm::vec3 &globalPosition, Mesh *mesh)
 {
-    Shader* shader = ResourceManager::getShader("chunk");
+    Shader *shader = ResourceManager::getShader("chunk");
     shader->bind();
 
     mesh->vertexArray.bind();
@@ -57,7 +96,7 @@ void Renderer::drawChunk(const glm::vec3 &globalPosition, Mesh *mesh)
 
 void Renderer::drawSprite(const glm::vec2 &position, const glm::vec2 &size, float rotation, Texture *texture)
 {
-    Shader* shader = ResourceManager::getShader("sprite");
+    Shader *shader = ResourceManager::getShader("sprite");
     shader->bind();
 
     texture->bind(0);
@@ -73,12 +112,17 @@ void Renderer::drawSprite(const glm::vec2 &position, const glm::vec2 &size, floa
     model = glm::scale(model, glm::vec3(size, 1.0f));
     shader->setUniformMat4("model", glm::value_ptr(model));
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glDrawElements(GL_TRIANGLES, quadMesh->indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
+
+    glDisable(GL_BLEND);
 }
 
 void Renderer::drawRay(const glm::vec3 &start, const glm::vec3 &direction, float length, const glm::vec3 &color)
 {
-    Shader* shader = ResourceManager::getShader("ray");
+    Shader *shader = ResourceManager::getShader("ray");
     shader->bind();
 
     glm::mat4 model = glm::mat4(1.0f);

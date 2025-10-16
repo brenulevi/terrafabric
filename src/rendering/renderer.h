@@ -7,10 +7,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "logging/logger.h"
 #include "core/resourcemanager.h"
-#include "rendering/transform.h"
-#include "rendering/camera.h"
-#include "rendering/mesh.h"
+#include "components/transform.h"
+#include "components/camera.h"
+#include "components/mesh.h"
 #include "rendering/uniformbuffer.h"
 
 class Renderer

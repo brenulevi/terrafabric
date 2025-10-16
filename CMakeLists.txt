@@ -10,22 +10,26 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(terrafabric
     src/main.cpp
 
-    src/core/game.cpp
-    src/core/window.cpp
-    src/core/resourcemanager.cpp
-    src/core/input.cpp
+    src/core/game.h src/core/game.cpp
+    src/core/window.h src/core/window.cpp
+    src/core/resourcemanager.h src/core/resourcemanager.cpp
+    src/core/input.h src/core/input.cpp
 
-    src/logging/logger.cpp
+    src/logging/logger.h src/logging/logger.cpp
 
-    src/rendering/renderer.cpp
-    src/rendering/shader.cpp
-    src/rendering/buffer.cpp
-    src/rendering/vertexarray.cpp
-    src/rendering/texture.cpp
+    src/rendering/renderer.h src/rendering/renderer.cpp
+    src/rendering/shader.h src/rendering/shader.cpp
+    src/rendering/buffer.h src/rendering/buffer.cpp
+    src/rendering/vertexarray.h src/rendering/vertexarray.cpp
+    src/rendering/texture.h src/rendering/texture.cpp
 
-    src/game/chunk.cpp
-    src/game/player.cpp
-    src/game/world.cpp
+    src/components/transform.h
+    src/components/camera.h
+    src/components/mesh.h
+
+    src/game/chunk.h src/game/chunk.cpp
+    src/game/player.h src/game/player.cpp
+    src/game/world.h src/game/world.cpp
 
     dependencies/glad/src/glad.c
 )
