@@ -25,6 +25,7 @@ public:
 
     void drawChunk(const glm::vec3& globalPosition, Mesh* mesh);
     void drawSprite(const glm::vec2& position, const glm::vec2& size, float rotation, Texture* texture);
+    void drawRay(const glm::vec3& start, const glm::vec3& direction, float length, const glm::vec3& color);
 
     void setViewport(int x, int y, int width, int height);
     void setPolygonMode(GLenum mode) { glPolygonMode(GL_FRONT_AND_BACK, mode); }

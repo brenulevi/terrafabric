@@ -9,6 +9,7 @@ Renderer::Renderer()
     _orthoUBO = new UniformBuffer(sizeof(glm::mat4), 1);    // Binding point 1
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
 
     _orthoUBO->bind();
     glm::mat4 ortho = glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f);
@@ -32,7 +33,6 @@ void Renderer::setView(Transform& transform, Camera &camera)
     glm::mat4 view = glm::lookAt(transform.position, transform.position + transform.forward, transform.up);
 
     // Set the view and projection matrices in the uniform buffer
-    _matricesUBO->bind();
     _matricesUBO->setSubData(0, sizeof(glm::mat4), glm::value_ptr(projection));
     _matricesUBO->setSubData(sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
 }
@@ -50,7 +50,7 @@ void Renderer::drawChunk(const glm::vec3 &globalPosition, Mesh *mesh)
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, globalPosition);
-    shader->setUniformMat4("model", glm::value_ptr(model));
+    shader->setUniformMat4("uModel", glm::value_ptr(model));
 
     glDrawElements(GL_TRIANGLES, mesh->indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
 }
@@ -73,12 +73,29 @@ void Renderer::drawSprite(const glm::vec2 &position, const glm::vec2 &size, floa
     model = glm::scale(model, glm::vec3(size, 1.0f));
     shader->setUniformMat4("model", glm::value_ptr(model));
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     glDrawElements(GL_TRIANGLES, quadMesh->indexBuffer.getCount(), GL_UNSIGNED_INT, nullptr);
+}
 
-    glDisable(GL_BLEND);
+void Renderer::drawRay(const glm::vec3 &start, const glm::vec3 &direction, float length, const glm::vec3 &color)
+{
+    Shader* shader = ResourceManager::getShader("ray");
+    shader->bind();
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, start);
+
+    glm::vec3 dirNorm = glm::normalize(direction);
+    float angle = acos(glm::dot(dirNorm, glm::vec3(0.0f, 1.0f, 0.0f)));
+    glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), dirNorm);
+    if (glm::length(rotationAxis) > 0.0001f)
+        model = glm::rotate(model, angle, glm::normalize(rotationAxis));
+
+    model = glm::scale(model, glm::vec3(0.1f, 0.1f, length));
+    shader->setUniformMat4("uModel", glm::value_ptr(model));
+
+    shader->setUniform3fv("uColor", glm::value_ptr(color));
+
+    glDrawArrays(GL_LINES, 0, 2);
 }
 
 void Renderer::setViewport(int x, int y, int width, int height)

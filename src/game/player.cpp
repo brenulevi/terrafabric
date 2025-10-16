@@ -78,12 +78,6 @@ void Player::updateMouseLook()
 
 void Player::doRayCast()
 {
-    RaycastHit hit;
-    bool didHit = raycast(_transform.position, _transform.forward, 5.0f, &hit);
-
-    if(!didHit)
-        return;
-
     // idk yet how to do it
 
     // if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))

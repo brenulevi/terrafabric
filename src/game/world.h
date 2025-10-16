@@ -23,10 +23,8 @@ public:
 
     void generateWorld();
 
-    void breakBlock(Chunk* chunk, const glm::ivec3& localPosition);
-    void placeBlock(Chunk* chunk, const glm::ivec3& localPosition, Block block);
-
     Chunk* getChunkAt(const glm::ivec2& chunkPosition);
+    Block getBlockAt(const glm::ivec3& globalPosition);
 
     inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getAllChunks() { return _chunks; }
 
