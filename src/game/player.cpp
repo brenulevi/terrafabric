@@ -1,6 +1,7 @@
 #include "player.h"
 
 #include "core/game.h"
+#include "core/raycast.h"
 
 Player::Player()
 {
@@ -8,10 +9,6 @@ Player::Player()
     _sensitivity = 0.1f;
     _lastX = 400.0f; // Assuming initial mouse position at the center of an 800px wide window
     _lastY = 300.0f; // Assuming initial mouse position at the center of a 600px high window
-}
-
-Player::~Player()
-{
 }
 
 void Player::update(float deltaTime)
@@ -34,20 +31,20 @@ void Player::updateMovement(float deltaTime)
 {
     glm::vec3 moveDirection(0.0f);
 
-    if(Input::isKeyHeld(GLFW_KEY_W))
+    if (Input::isKeyHeld(GLFW_KEY_W))
         moveDirection += _transform.forward;
-    if(Input::isKeyHeld(GLFW_KEY_S))
+    if (Input::isKeyHeld(GLFW_KEY_S))
         moveDirection -= _transform.forward;
-    if(Input::isKeyHeld(GLFW_KEY_A))
+    if (Input::isKeyHeld(GLFW_KEY_A))
         moveDirection -= _transform.right;
-    if(Input::isKeyHeld(GLFW_KEY_D))
+    if (Input::isKeyHeld(GLFW_KEY_D))
         moveDirection += _transform.right;
-    if(Input::isKeyHeld(GLFW_KEY_SPACE))
+    if (Input::isKeyHeld(GLFW_KEY_SPACE))
         moveDirection += glm::vec3(0.0f, 1.0f, 0.0f);
-    if(Input::isKeyHeld(GLFW_KEY_LEFT_SHIFT))
+    if (Input::isKeyHeld(GLFW_KEY_LEFT_SHIFT))
         moveDirection -= glm::vec3(0.0f, 1.0f, 0.0f);
 
-    if(glm::length(moveDirection) > 0.0f)
+    if (glm::length(moveDirection) > 0.0f)
         moveDirection = glm::normalize(moveDirection);
 
     _transform.position += moveDirection * _moveSpeed * deltaTime;
@@ -70,9 +67,9 @@ void Player::updateMouseLook()
     _transform.rotation.y += offsetX;
     _transform.rotation.x += offsetY;
 
-    if(_transform.rotation.x > 89.0f)
+    if (_transform.rotation.x > 89.0f)
         _transform.rotation.x = 89.0f;
-    else if(_transform.rotation.x < -89.0f)
+    else if (_transform.rotation.x < -89.0f)
         _transform.rotation.x = -89.0f;
 }
 
@@ -80,15 +77,20 @@ void Player::doRayCast()
 {
     // idk yet how to do it
 
-    // if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
-    // {
-    //     // Handle raycast hit
-    //     // For example, log the hit position or interact with the object
+    Logger::info("Player position: ({}, {}, {})", _transform.position.x, _transform.position.y, _transform.position.z);
 
-    //     glm::ivec3 localPos = glm::ivec3(hit.position) - glm::ivec3(hit.chunk->getGlobalPosition());
-    //     Game::getInstance()->getWorld()->breakBlock(hit.chunk, localPos);
-    // }
-    
+    RaycastHit hit;
+    if (Raycast::cast(_transform.position, _transform.forward, 5.0f, hit))
+    {
+        // Additional interaction logic can be added here
+        Block* block = Game::getInstance()->getWorld()->getBlockAt(hit.blockPos);
+        if (block)
+        {
+            block->type = Block::Air; // Example: remove the block hit by the raycast
+            Game::getInstance()->getWorld()->invalidateChunkAt(hit.blockPos);
+        }
+    }
+
     // if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
     // {
     //     glm::ivec3 localPos = glm::ivec3(hit.previousBlockPosition) - glm::ivec3(hit.chunk->getGlobalPosition());

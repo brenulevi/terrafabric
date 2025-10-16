@@ -15,6 +15,11 @@ void ResourceManager::shutdown()
     {
         delete pair.second;
     }
+
+    for (auto& pair : _meshes)
+    {
+        delete pair.second;
+    }
 }
 
 Shader* ResourceManager::addShader(const std::string &name, const std::string &vertexPath, const std::string &fragmentPath)

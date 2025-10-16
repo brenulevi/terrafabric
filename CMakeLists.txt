@@ -14,6 +14,7 @@ add_executable(terrafabric
     src/core/window.h src/core/window.cpp
     src/core/resourcemanager.h src/core/resourcemanager.cpp
     src/core/input.h src/core/input.cpp
+    src/core/raycast.h src/core/raycast.cpp
 
     src/logging/logger.h src/logging/logger.cpp
 

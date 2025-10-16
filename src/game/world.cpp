@@ -30,6 +30,29 @@ void World::generateWorld()
     }
 }
 
+void World::invalidateChunkAt(const glm::vec3 &chunkGlobalPosition)
+{
+    glm::ivec2 chunkPos(chunkGlobalPosition.x / CHUNK_SIZE_X, chunkGlobalPosition.z / CHUNK_SIZE_Z);
+    Chunk* chunk = getChunkAt(chunkPos);
+    if (chunk)
+    {
+        chunk->generateMesh();
+        
+        Chunk* neighborsChunks[] = {
+            getChunkAt(chunkPos + glm::ivec2(1, 0)),
+            getChunkAt(chunkPos + glm::ivec2(-1, 0)),
+            getChunkAt(chunkPos + glm::ivec2(0, 1)),
+            getChunkAt(chunkPos + glm::ivec2(0, -1))
+        };
+
+        for (Chunk* neighbor : neighborsChunks)
+        {
+            if (neighbor)
+                neighbor->generateMesh();
+        }
+    }
+}
+
 Chunk *World::getChunkAt(const glm::ivec2 &chunkPosition)
 {
     auto it = _chunks.find(chunkPosition);
@@ -40,7 +63,7 @@ Chunk *World::getChunkAt(const glm::ivec2 &chunkPosition)
     return nullptr;
 }
 
-Block World::getBlockAt(const glm::ivec3 &globalPosition)
+Block* World::getBlockAt(const glm::ivec3 &globalPosition)
 {
     glm::ivec2 chunkPos(globalPosition.x / CHUNK_SIZE_X, globalPosition.z / CHUNK_SIZE_Z);
     Chunk* chunk = getChunkAt(chunkPos);
@@ -55,5 +78,5 @@ Block World::getBlockAt(const glm::ivec3 &globalPosition)
 
         return chunk->getBlock(localX, localY, localZ);
     }
-    return Block(Block::Air);
+    return nullptr;
 }

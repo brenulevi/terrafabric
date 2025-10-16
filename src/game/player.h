@@ -11,7 +11,6 @@ class Player
 {
 public:
     Player();
-    ~Player();
 
     void update(float deltaTime);
 

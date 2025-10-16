@@ -108,8 +108,8 @@ void Game::run()
 
         // Render crosshair
         auto crosshairTexture = ResourceManager::getTexture("crosshair");
-        float x = (_window->getWidth() - crosshairTexture->getWidth()) / 2.0f;
-        float y = (_window->getHeight() - crosshairTexture->getHeight()) / 2.0f;
+        float x = (_window->getWidth()) / 2.0f;
+        float y = (_window->getHeight()) / 2.0f;
         float sizeX = crosshairTexture->getWidth();
         float sizeY = crosshairTexture->getHeight();
 

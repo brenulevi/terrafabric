@@ -23,7 +23,7 @@ public:
 
     inline glm::ivec2 getChunkPosition() const { return _chunkPosition; }
     inline glm::vec3 getGlobalPosition() const { return _worldPosition; }
-    Block getBlock(int x, int y, int z);
+    Block* getBlock(int x, int y, int z);
     inline Mesh* getMesh() { return _mesh; }
 
     void setBlock(int x, int y, int z, Block block);

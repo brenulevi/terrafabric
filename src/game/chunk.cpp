@@ -13,7 +13,9 @@ Chunk::Chunk(glm::ivec2 position)
         {
             for(int z = 0; z < CHUNK_SIZE_Z; ++z)
             {
-                _blocks[x][y][z] = Block(Block::Type::Grass);
+                Block block;
+                block.type = Block::Type::Grass;
+                _blocks[x][y][z] = block;
             }
         }
     }
@@ -41,7 +43,7 @@ void Chunk::generateMesh()
             for(int z = 0; z < CHUNK_SIZE_Z; ++z)
             {
                 Block& block = _blocks[x][y][z];
-                if(block.getType() == Block::Type::Air)
+                if(block.type == Block::Type::Air)
                     continue;
 
                 bool facesVisible[6];
@@ -54,7 +56,7 @@ void Chunk::generateMesh()
 
                 for(int i = 0; i < 6; i++)
                     if(facesVisible[i])
-                        updateMeshData(vertices, indices, x, y, z, i, block.getType());
+                        updateMeshData(vertices, indices, x, y, z, i, block.type);
             }
         }
     }
@@ -63,11 +65,11 @@ void Chunk::generateMesh()
     _mesh->indexBuffer.setData(indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 }
 
-Block Chunk::getBlock(int x, int y, int z)
+Block* Chunk::getBlock(int x, int y, int z)
 {
     if(x < 0 || x >= CHUNK_SIZE_X || y < 0 || y >= CHUNK_SIZE_Y || z < 0 || z >= CHUNK_SIZE_Z)
-        return Block();
-    return _blocks[x][y][z];
+        return nullptr;
+    return &_blocks[x][y][z];
 }
 
 void Chunk::setBlock(int x, int y, int z, Block block)
@@ -88,7 +90,7 @@ bool Chunk::verifyLocalVisibility(int x, int y, int z)
     if(x < 0 || x >= CHUNK_SIZE_X || y < 0 || y >= CHUNK_SIZE_Y || z < 0 || z >= CHUNK_SIZE_Z)
         return true;
 
-    return _blocks[x][y][z].getType() == Block::Type::Air;
+    return _blocks[x][y][z].type == Block::Type::Air;
 }
 
 bool Chunk::verifyGlobalVisibility(int x, int y, int z)
@@ -106,11 +108,16 @@ bool Chunk::verifyGlobalVisibility(int x, int y, int z)
     if(!neighbor)
         return true;
 
-    return neighbor->getBlock(
+    Block* neighborBlock = neighbor->getBlock(
         (x < 0 ? CHUNK_SIZE_X - 1 : (x >= CHUNK_SIZE_X ? 0 : x)),
         y,
         (z < 0 ? CHUNK_SIZE_Z - 1 : (z >= CHUNK_SIZE_Z ? 0 : z))
-    ).getType() == Block::Type::Air;
+    );
+
+    if(!neighborBlock)
+        return true;
+
+    return neighborBlock->type == Block::Type::Air;
 }
 
 void Chunk::updateMeshData(std::vector<float> &vertices, std::vector<unsigned int> &indices, int x, int y, int z, int face, Block::Type type)

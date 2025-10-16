@@ -52,6 +52,16 @@ Renderer::Renderer()
     quadMesh->indexBuffer.setData(sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
     Logger::info("Mesh 'quad' loaded");
 
+    Logger::info("Loading ray mesh");
+    float rayVertices[] = {
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f};
+    VertexBufferLayout rayLayout;
+    rayLayout.push<float>(3); // Position
+    auto rayMesh = ResourceManager::addMesh("ray", rayLayout);
+    rayMesh->vertexBuffer.setData(sizeof(rayVertices), rayVertices, GL_STATIC_DRAW);
+    Logger::info("Mesh 'ray' loaded");
+
     Logger::info("Resources loaded");
 }
 

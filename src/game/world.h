@@ -23,8 +23,10 @@ public:
 
     void generateWorld();
 
+    void invalidateChunkAt(const glm::vec3& chunkGlobalPosition);
+
     Chunk* getChunkAt(const glm::ivec2& chunkPosition);
-    Block getBlockAt(const glm::ivec3& globalPosition);
+    Block* getBlockAt(const glm::ivec3& globalPosition);
 
     inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getAllChunks() { return _chunks; }
 
