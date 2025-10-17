@@ -2,7 +2,7 @@
 
 #include "game.h"
 
-bool Raycast::cast(const glm::vec3 &start, const glm::vec3 &direction, float maxDistance, RaycastHit &hitInfo)
+bool Raycast::DDACast(const glm::vec3 &start, const glm::vec3 &direction, float maxDistance, RaycastHit &hitInfo)
 {
     const float EPS = 1e-6f;
     glm::vec3 dir = glm::normalize(direction);
@@ -108,6 +108,32 @@ bool Raycast::cast(const glm::vec3 &start, const glm::vec3 &direction, float max
             hitInfo.distance = t;
             hitInfo.hitPoint = start + dir * t;
             // faceNormal já setada ao avançar
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Raycast::cast(const glm::vec3 &start, const glm::vec3 &direction, float maxDistance, RaycastHit &hitInfo)
+{
+    for(float t = 0.0f; t <= maxDistance; t += 0.1f)
+    {
+        glm::vec3 currentPos = start + direction * t;
+        glm::ivec3 voxel(
+            (int)std::floor(currentPos.x),
+            (int)std::floor(currentPos.y),
+            (int)std::floor(currentPos.z)
+        );
+
+        Block* block = Game::getInstance()->getWorld()->getBlockAt(voxel);
+        if(block && block->type != Block::Air)
+        {
+            hitInfo.blockPos = voxel;
+            hitInfo.hitPoint = currentPos;
+            hitInfo.distance = t;
+            // A normal da face não é calculada neste método simples
+            hitInfo.faceNormal = glm::vec3(0.0f, 0.0f, 0.0f);
             return true;
         }
     }

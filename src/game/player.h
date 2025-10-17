@@ -7,6 +7,8 @@
 #include "core/input.h"
 #include "logging/logger.h"
 
+#define PLAYER_GRAVITY 25.0f
+
 class Player
 {
 public:
@@ -35,6 +37,7 @@ private:
 
     float _moveSpeed;
     float _sensitivity;
+    
     float _lastX;
     float _lastY;
 };

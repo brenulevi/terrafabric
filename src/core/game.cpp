@@ -43,7 +43,8 @@ Game::Game()
     }
 
     _world = new World();
-    _world->generateWorld();
+    _world->generateInitialChunks();
+
     _player = new Player();
     _player->setPosition(glm::vec3(0.0f, 20.0f, 0.0f));
 
@@ -76,12 +77,14 @@ void Game::run()
 
     while(_isRunning)
     {
+        _window->pollEvents();
+
         float deltaTime = glfwGetTime() - totalTime;
         totalTime += deltaTime;
 
-        _window->pollEvents();
         Input::update();
 
+        _world->update();
         _player->update(deltaTime);
 
         if(Input::isKeyPressed(GLFW_KEY_ESCAPE))
@@ -106,7 +109,7 @@ void Game::run()
         _renderer->setView(_player->getTransform(), _player->getCamera());
 
         // Render all chunks
-        for(auto& pair : _world->getAllChunks())
+        for(auto& pair : _world->getLoadedChunks())
         {
             Chunk* chunk = pair.second;
             _renderer->drawChunk(chunk->getGlobalPosition(), chunk->getMesh());

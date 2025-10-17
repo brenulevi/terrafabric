@@ -15,7 +15,7 @@ Chunk::Chunk(glm::ivec2 position)
             {
                 Block block;
                 if(y < 16)
-                    block.type = Block::Type::Grass;
+                    block.type = Block::Type::Bedrock;
                 else
                     block.type = Block::Type::Air;
                 _blocks[x][y][z] = block;

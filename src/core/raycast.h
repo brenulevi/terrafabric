@@ -16,5 +16,6 @@ class Raycast
 {
 public:
     // DDA algorithm for raycasting in a voxel grid
+    static bool DDACast(const glm::vec3& start, const glm::vec3& direction, float maxDistance, RaycastHit& hitInfo);
     static bool cast(const glm::vec3& start, const glm::vec3& direction, float maxDistance, RaycastHit& hitInfo);
 };

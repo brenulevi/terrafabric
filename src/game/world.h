@@ -2,16 +2,22 @@
 
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <queue>
+#include <unordered_set>
 
 #include "chunk.h"
 
-#define WORLD_SIZE 5
+#define INITIAL_WORLD_RADIUS 4
+#define RENDER_DISTANCE 16
+#define CHUNKS_TO_GENERATE_PER_FRAME 2
 
-struct IVec2Hash
+template<> struct std::hash<glm::ivec2>
 {
     std::size_t operator()(const glm::ivec2& v) const
     {
-        return std::hash<int>()(v.x) ^ (std::hash<int>()(v.y) << 1);
+        std::size_t h1 = std::hash<int>()(v.x);
+        std::size_t h2 = std::hash<int>()(v.y);
+        return h1 ^ (h2 << 1); // Combine hashes
     }
 };
 
@@ -21,15 +27,19 @@ public:
     World();
     ~World();
 
-    void generateWorld();
+    void generateInitialChunks();
+    void update();
 
-    void invalidateChunkAt(const glm::vec3& chunkGlobalPosition);
+    void breakBlockAt(const glm::vec3& globalPosition);
 
+    Chunk* getChunkAt(const glm::vec3& globalPosition);
     Chunk* getChunkAt(const glm::ivec2& chunkPosition);
-    Block* getBlockAt(const glm::ivec3& globalPosition);
 
-    inline std::unordered_map<glm::ivec2, Chunk*, IVec2Hash>& getAllChunks() { return _chunks; }
+    Block* getBlockAt(const glm::vec3& globalPosition);
+
+    inline std::unordered_map<glm::ivec2, Chunk*>& getLoadedChunks() { return _loadedChunks; }
 
 private:
-    std::unordered_map<glm::ivec2, Chunk*, IVec2Hash> _chunks;
+    std::unordered_map<glm::ivec2, Chunk*> _loadedChunks;
+    std::queue<glm::ivec2> _chunksToGenerateMesh;
 };

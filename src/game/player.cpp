@@ -80,30 +80,29 @@ void Player::doRayCast()
 {
     // idk yet how to do it
 
-    Logger::info("Player position: ({}, {}, {})", _transform.position.x, _transform.position.y, _transform.position.z);
-
     RaycastHit hit;
-    if (Raycast::cast(_transform.position, _transform.forward, 5.0f, hit))
+    if (Raycast::DDACast(_transform.position, _transform.forward, 5.0f, hit))
     {
         if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            Block *block = Game::getInstance()->getWorld()->getBlockAt(hit.blockPos);
-            if (block)
-            {
-                block->type = Block::Air;
-                Game::getInstance()->getWorld()->invalidateChunkAt(hit.blockPos);
-            }
+            Logger::info(
+                "Hit block at ({}, {}, {}) with normal ({}, {}, {}) and distance {}",
+                hit.blockPos.x, hit.blockPos.y, hit.blockPos.z,
+                hit.faceNormal.x, hit.faceNormal.y, hit.faceNormal.z,
+                hit.distance
+            );
+            Game::getInstance()->getWorld()->breakBlockAt(hit.blockPos);
         }
 
         if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
         {
-            glm::ivec3 placePos = hit.blockPos + glm::ivec3(hit.faceNormal);
-            Block *block = Game::getInstance()->getWorld()->getBlockAt(placePos);
-            if (block)
-            {
-                block->type = Block::Stone; // Example: place a stone block at the position adjacent to the hit block
-                Game::getInstance()->getWorld()->invalidateChunkAt(placePos);
-            }
+            // glm::ivec3 placePos = hit.blockPos + glm::ivec3(hit.faceNormal);
+            // Block *block = Game::getInstance()->getWorld()->getBlockAt(placePos);
+            // if (block)
+            // {
+            //     block->type = Block::Stone; // Example: place a stone block at the position adjacent to the hit block
+            //     Game::getInstance()->getWorld()->invalidateChunkAt(placePos);
+            // }
         }
     }
 }
