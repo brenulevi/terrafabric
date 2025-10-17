@@ -29,12 +29,12 @@ void Input::update()
     {
         _previousKeys[i] = _currentKeys[i];
         _currentKeys[i] = glfwGetKey(glfwGetCurrentContext(), i) == GLFW_PRESS;
-        
-        if(i <= GLFW_MOUSE_BUTTON_LAST)
-        {
-            _previousMouseButton[i] = _currentMouseButton[i];
-            _currentMouseButton[i] = glfwGetMouseButton(glfwGetCurrentContext(), i) == GLFW_PRESS;
-        }
+    }
+
+    for(int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++)
+    {
+        _previousMouseButton[i] = _currentMouseButton[i];
+        _currentMouseButton[i] = glfwGetMouseButton(glfwGetCurrentContext(), i) == GLFW_PRESS;
     }
 
     double xpos, ypos;

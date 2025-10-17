@@ -65,16 +65,18 @@ Chunk *World::getChunkAt(const glm::ivec2 &chunkPosition)
 
 Block* World::getBlockAt(const glm::ivec3 &globalPosition)
 {
-    glm::ivec2 chunkPos(globalPosition.x / CHUNK_SIZE_X, globalPosition.z / CHUNK_SIZE_Z);
+    // floor division to get chunk position
+    glm::ivec2 chunkPos(
+        globalPosition.x >= 0 ? globalPosition.x / CHUNK_SIZE_X : (globalPosition.x - CHUNK_SIZE_X + 1) / CHUNK_SIZE_X,
+        globalPosition.z >= 0 ? globalPosition.z / CHUNK_SIZE_Z : (globalPosition.z - CHUNK_SIZE_Z + 1) / CHUNK_SIZE_Z
+    );
     Chunk* chunk = getChunkAt(chunkPos);
     if (chunk)
     {
-        int localX = globalPosition.x % CHUNK_SIZE_X;
+        // floor modulus to get local block position
+        int localX = globalPosition.x >= 0 ? globalPosition.x % CHUNK_SIZE_X : (CHUNK_SIZE_X + (globalPosition.x % CHUNK_SIZE_X)) % CHUNK_SIZE_X;
         int localY = globalPosition.y;
-        int localZ = globalPosition.z % CHUNK_SIZE_Z;
-
-        if (localX < 0) localX += CHUNK_SIZE_X;
-        if (localZ < 0) localZ += CHUNK_SIZE_Z;
+        int localZ = globalPosition.z >= 0 ? globalPosition.z % CHUNK_SIZE_Z : (CHUNK_SIZE_Z + (globalPosition.z % CHUNK_SIZE_Z)) % CHUNK_SIZE_Z;
 
         return chunk->getBlock(localX, localY, localZ);
     }

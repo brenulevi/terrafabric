@@ -35,6 +35,9 @@ void Player::updateMovement(float deltaTime)
         moveDirection += _transform.forward;
     if (Input::isKeyHeld(GLFW_KEY_S))
         moveDirection -= _transform.forward;
+
+    moveDirection.y = 0.0f; // Prevent flying when looking up/down
+
     if (Input::isKeyHeld(GLFW_KEY_A))
         moveDirection -= _transform.right;
     if (Input::isKeyHeld(GLFW_KEY_D))
@@ -82,24 +85,25 @@ void Player::doRayCast()
     RaycastHit hit;
     if (Raycast::cast(_transform.position, _transform.forward, 5.0f, hit))
     {
-        // Additional interaction logic can be added here
-        Block* block = Game::getInstance()->getWorld()->getBlockAt(hit.blockPos);
-        if (block)
+        if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_LEFT))
         {
-            block->type = Block::Air; // Example: remove the block hit by the raycast
-            Game::getInstance()->getWorld()->invalidateChunkAt(hit.blockPos);
+            Block *block = Game::getInstance()->getWorld()->getBlockAt(hit.blockPos);
+            if (block)
+            {
+                block->type = Block::Air;
+                Game::getInstance()->getWorld()->invalidateChunkAt(hit.blockPos);
+            }
+        }
+
+        if (Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
+        {
+            glm::ivec3 placePos = hit.blockPos + glm::ivec3(hit.faceNormal);
+            Block *block = Game::getInstance()->getWorld()->getBlockAt(placePos);
+            if (block)
+            {
+                block->type = Block::Stone; // Example: place a stone block at the position adjacent to the hit block
+                Game::getInstance()->getWorld()->invalidateChunkAt(placePos);
+            }
         }
     }
-
-    // if(Input::isMouseButtonPressed(GLFW_MOUSE_BUTTON_RIGHT))
-    // {
-    //     glm::ivec3 localPos = glm::ivec3(hit.previousBlockPosition) - glm::ivec3(hit.chunk->getGlobalPosition());
-
-    //     if(localPos.x < 0 || localPos.x >= CHUNK_SIZE_X ||
-    //        localPos.y < 0 || localPos.y >= CHUNK_SIZE_Y ||
-    //        localPos.z < 0 || localPos.z >= CHUNK_SIZE_Z)
-    //         return;
-
-    //     Game::getInstance()->getWorld()->placeBlock(hit.chunk, localPos, Block(Block::Type::Stone));
-    // }
 }

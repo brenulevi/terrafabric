@@ -95,6 +95,12 @@ void Game::run()
         if(Input::isKeyPressed(GLFW_KEY_V))
             _renderer->setPolygonMode(GL_FILL);
 
+        if(Input::isKeyPressed(GLFW_KEY_F))
+        {
+            bool isDisabled = Input::getCursorMode() == CursorMode::DISABLED;
+            Input::setCursorMode(isDisabled ? CursorMode::NORMAL : CursorMode::DISABLED);
+        }
+
         _renderer->clear();
 
         _renderer->setView(_player->getTransform(), _player->getCamera());

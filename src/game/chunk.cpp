@@ -14,7 +14,10 @@ Chunk::Chunk(glm::ivec2 position)
             for(int z = 0; z < CHUNK_SIZE_Z; ++z)
             {
                 Block block;
-                block.type = Block::Type::Grass;
+                if(y < 16)
+                    block.type = Block::Type::Grass;
+                else
+                    block.type = Block::Type::Air;
                 _blocks[x][y][z] = block;
             }
         }
