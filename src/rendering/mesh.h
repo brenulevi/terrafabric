@@ -7,14 +7,15 @@
 class Mesh
 {
 public:
-    Mesh();
-    ~Mesh();
+    Mesh(BufferLayout& layout);
 
     void setVertices(const void* vertices, unsigned int size);
     void setIndices(const unsigned int* indices, unsigned int size);
 
-    void bind();
-    void unbind();
+    void bind() const;
+    void unbind() const;
+
+    unsigned int getIndexCount() const;
 
 private:
     VertexArray _va;

@@ -5,6 +5,7 @@ project(TerraFabric VERSION 1.0)
 set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(external/glfw)
+add_subdirectory(external/glm)
 
 add_executable(terrafabric
     src/main.cpp
@@ -26,16 +27,25 @@ add_executable(terrafabric
     src/rendering/indexbuffer.cpp
     src/rendering/vertexarray.h
     src/rendering/vertexarray.cpp
+    src/rendering/bufferlayout.h
+    src/rendering/bufferlayout.cpp
+    src/rendering/mesh.h
+    src/rendering/mesh.cpp
+    src/rendering/texture.h
+    src/rendering/texture.cpp
 
     external/glad/src/glad.c
+    external/stb_image/src/stb_image.cpp
 )
 
-target_link_libraries(terrafabric PRIVATE glfw)
+target_link_libraries(terrafabric PRIVATE glfw glm)
 
 target_include_directories(terrafabric PRIVATE
     src
     external/glfw/include
     external/glad/include
+    external/stb_image/include
+    external/glm/include
 )
 
 target_compile_definitions(terrafabric PRIVATE

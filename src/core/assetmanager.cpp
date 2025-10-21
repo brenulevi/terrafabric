@@ -21,6 +21,17 @@ Shader& AssetManager::getShader(const std::string &name)
     return *_shaders[name];
 }
 
+Mesh &AssetManager::loadMesh(const std::string &name, BufferLayout &layout)
+{
+    _meshes[name] = std::make_unique<Mesh>(layout);
+    return *_meshes[name];
+}
+
+Mesh &AssetManager::getMesh(const std::string &name)
+{
+    return *_meshes[name];
+}
+
 AssetManager *AssetManager::get()
 {
     return _instance;
