@@ -4,6 +4,7 @@
 
 #include "window.h"
 #include "rendering/renderer.h"
+#include "assetmanager.h"
 
 class Application
 {
@@ -19,6 +20,7 @@ private:
 private:
     std::unique_ptr<Window> _window;
     std::unique_ptr<Renderer> _renderer;
+    std::unique_ptr<AssetManager> _assetManager;
 
     bool _isRunning;
 };

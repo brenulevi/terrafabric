@@ -35,7 +35,7 @@ void Shader::bind()
 
 void Shader::unbind()
 {
-    glUseProgram(NULL);
+    glUseProgram(0);
 }
 
 unsigned int Shader::createAndCompileShader(const char *path, GLenum type)

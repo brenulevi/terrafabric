@@ -4,10 +4,12 @@ Application::Application()
     : _isRunning(true)
 {
     _window = std::make_unique<Window>(800, 600, "Terrafabric");
-    _window->setCloseCallback(std::bind(Application::onClose, this));
-    _window->setResizeCallback(std::bind(Application::onResize, this, std::placeholders::_1, std::placeholders::_2));
+    _window->setCloseCallback(std::bind(&Application::onClose, this));
+    _window->setResizeCallback(std::bind(&Application::onResize, this, std::placeholders::_1, std::placeholders::_2));
 
     _renderer = std::make_unique<Renderer>();
+
+    _assetManager = std::make_unique<AssetManager>();
 }
 
 void Application::loop()

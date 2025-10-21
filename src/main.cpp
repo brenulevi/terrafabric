@@ -1,8 +1,8 @@
-#include "Core/Application.h"
+#include "core/application.h"
 
-int main(int argc, char* argv[])
+int main()
 {
-    Application app(argc, argv);
-    app.Loop();
+    Application app;
+    app.loop();
     return 0;
 }

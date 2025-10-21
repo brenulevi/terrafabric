@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(TerraFabric VERSION 1.0 LANGUAGES CXX)
+project(TerraFabric VERSION 1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -13,11 +13,19 @@ add_executable(terrafabric
     src/core/application.cpp
     src/core/window.h
     src/core/window.cpp
+    src/core/assetmanager.h
+    src/core/assetmanager.cpp
 
     src/rendering/renderer.h
     src/rendering/renderer.cpp
     src/rendering/shader.h
     src/rendering/shader.cpp
+    src/rendering/vertexbuffer.h
+    src/rendering/vertexbuffer.cpp
+    src/rendering/indexbuffer.h
+    src/rendering/indexbuffer.cpp
+    src/rendering/vertexarray.h
+    src/rendering/vertexarray.cpp
 
     external/glad/src/glad.c
 )
@@ -32,4 +40,11 @@ target_include_directories(terrafabric PRIVATE
 
 target_compile_definitions(terrafabric PRIVATE
     GLFW_INCLUDE_NONE
+)
+
+add_custom_command(
+    TARGET terrafabric POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:terrafabric>/assets
+    COMMENT "Copying assets to output directory"
 )
