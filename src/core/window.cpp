@@ -50,3 +50,8 @@ void Window::setResizeCallback(std::function<void(int, int)> cb)
 {
     _resizeCallback = cb;
 }
+
+GLFWwindow *Window::getPtr()
+{
+    return _ptr;
+}

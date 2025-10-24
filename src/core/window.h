@@ -15,6 +15,8 @@ public:
     void setCloseCallback(std::function<void()> cb);
     void setResizeCallback(std::function<void(int, int)> cb);
 
+    GLFWwindow* getPtr();
+
 private:
     GLFWwindow* _ptr;
     int _width;

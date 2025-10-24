@@ -28,12 +28,22 @@ Shader::~Shader()
     glDeleteProgram(_id);
 }
 
-void Shader::bind()
+void Shader::setInt(const std::string &name, int value)
+{
+    glUniform1i(getUniformLocation(name), value);
+}
+
+void Shader::setMat4(const std::string &name, const float *matrix)
+{
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, matrix);
+}
+
+void Shader::bind() const
 {
     glUseProgram(_id);
 }
 
-void Shader::unbind()
+void Shader::unbind() const
 {
     glUseProgram(0);
 }
@@ -67,4 +77,15 @@ unsigned int Shader::createAndCompileShader(const char *path, GLenum type)
     }
 
     return shader;
+}
+
+int Shader::getUniformLocation(const std::string &name)
+{
+    if(_uniformLocationCache.find(name) == _uniformLocationCache.end())
+    {
+        int location = glGetUniformLocation(_id, name.c_str());
+        _uniformLocationCache[name] = location;
+    }
+
+    return _uniformLocationCache[name];
 }

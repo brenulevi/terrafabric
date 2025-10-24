@@ -32,6 +32,18 @@ Mesh &AssetManager::getMesh(const std::string &name)
     return *_meshes[name];
 }
 
+Texture &AssetManager::loadTexture(const std::string &name, const std::string &path)
+{
+    _textures[name] = std::make_unique<Texture>();
+    _textures[name]->loadImage(path.c_str());
+    return *_textures[name];
+}
+
+Texture &AssetManager::getTexture(const std::string &name)
+{
+    return *_textures[name];
+}
+
 AssetManager *AssetManager::get()
 {
     return _instance;

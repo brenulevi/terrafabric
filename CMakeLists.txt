@@ -16,6 +16,8 @@ add_executable(terrafabric
     src/core/window.cpp
     src/core/assetmanager.h
     src/core/assetmanager.cpp
+    src/core/input.h
+    src/core/input.cpp
 
     src/rendering/renderer.h
     src/rendering/renderer.cpp
@@ -33,6 +35,22 @@ add_executable(terrafabric
     src/rendering/mesh.cpp
     src/rendering/texture.h
     src/rendering/texture.cpp
+    src/rendering/uniformbuffer.h
+    src/rendering/uniformbuffer.cpp
+    
+    src/components/transform.h
+    src/components/transform.cpp
+    src/components/camera.h
+    src/components/camera.cpp
+
+    src/game/player.h
+    src/game/player.cpp
+    src/game/cube.h
+    src/game/cube.cpp
+    src/game/chunk.h
+    src/game/chunk.cpp
+    src/game/world.h
+    src/game/world.cpp
 
     external/glad/src/glad.c
     external/stb_image/src/stb_image.cpp
